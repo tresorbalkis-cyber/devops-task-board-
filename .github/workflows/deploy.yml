@@ -1,0 +1,39 @@
+name: Deploy DevOps Task Board
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-task-board
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64]
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Vérifier Docker Compose
+        run: docker compose version
+
+      - name: Construire et déployer l’application
+        run: docker compose up -d --build todo-app
+
+      - name: Vérifier que l’application répond
+        run: |
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:5111/api/tasks >/dev/null; then
+              echo "Application opérationnelle."
+              exit 0
+            fi
+            sleep 3
+          done
+          docker compose logs --tail=100 todo-app
+          exit 1

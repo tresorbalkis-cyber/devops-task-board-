@@ -1,0 +1,14 @@
+{
+  "name": "devops-task-board",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Application de gestion de tâches avec métriques Prometheus",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "4.22.3",
+    "prom-client": "15.1.3"
+  }
+}
